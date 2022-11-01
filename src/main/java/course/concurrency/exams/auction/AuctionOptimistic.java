@@ -8,18 +8,38 @@ public class AuctionOptimistic implements Auction {
         this.notifier = notifier;
     }
 
-    private Bid latestBid;
+    private volatile Bid latestBid;
 
     public boolean propose(Bid bid) {
-        if (bid.getPrice() > latestBid.getPrice()) {
-            notifier.sendOutdatedMessage(latestBid);
+        Bid previousBid = latestBid;
+        long currentPrice = bid.getPrice();
+
+        if (latestBid == null && currentPrice == bid.getPrice()) {
             latestBid = bid;
+
             return true;
         }
-        return false;
+
+        while (true) {
+            if (currentPrice > latestBid.getPrice()) {
+                latestBid = bid;
+
+                if (currentPrice != bid.getPrice()) {
+                    latestBid = previousBid;
+
+                    continue;
+                }
+
+                notifier.sendOutdatedMessage(latestBid);
+
+                return true;
+            }
+
+            return false;
+        }
     }
 
-    public Bid getLatestBid() {
+    public synchronized Bid getLatestBid() {
         return latestBid;
     }
 }
