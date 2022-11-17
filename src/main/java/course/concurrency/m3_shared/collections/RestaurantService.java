@@ -14,11 +14,7 @@ public class RestaurantService {
         put("C", new Restaurant("C"));
     }};
 
-    private ConcurrentHashMap<String, LongAdder> stat = new ConcurrentHashMap<>() {{
-        put("A", new LongAdder());
-        put("B", new LongAdder());
-        put("C", new LongAdder());
-    }};
+    private ConcurrentHashMap<String, LongAdder> stat = new ConcurrentHashMap<>();
 
     public Restaurant getByName(String restaurantName) {
         addToStat(restaurantName);
@@ -27,7 +23,7 @@ public class RestaurantService {
     }
 
     public void addToStat(String restaurantName) {
-        LongAdder requestCount = stat.get(restaurantName);
+        LongAdder requestCount = stat.computeIfAbsent(restaurantName, k -> new LongAdder());
         requestCount.increment();
     }
 
