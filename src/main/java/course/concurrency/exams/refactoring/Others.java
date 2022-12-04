@@ -52,11 +52,8 @@ public class Others {
     public static class MountTableManager {
 
         private String address;
-        public MountTableManager(String address) {
-            this.address = address;
-        }
 
-        public boolean refresh() {
+        public boolean refresh(String address) {
             return ThreadLocalRandom.current().nextBoolean();
         }
     }
