@@ -1,26 +1,28 @@
-package course.concurrency.m2_async.executors.spring;
+package course.concurrency.concurrent_deadlock;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.EnableAsync;
 
-@EnableAsync
+/**
+ * Created with IntelliJ IDEA.
+ * User: marowak
+ * Date: 30.10.2022
+ * Time: 18:34
+ */
 @SpringBootApplication
-public class SpringBootAsyncTest {
-
+public class ConcurrentDeadlock {
     @Autowired
-    private AsyncClassTest testClass;
+    private DeadLockService deadLockService;
 
-    // this method executes after application start
     @EventListener(ApplicationReadyEvent.class)
     public void actionAfterStartup() {
-        testClass.runAsyncTask();
+        deadLockService.alwaysAdd();
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringBootAsyncTest.class, args);
+        SpringApplication.run(ConcurrentDeadlock.class, args);
     }
 }
